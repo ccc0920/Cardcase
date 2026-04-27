@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
@@ -23,16 +24,20 @@ import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.Encoder
 import com.team4.cardcase2.entity.WholeServerCard
 import com.team4.cardcase2.interfaces.HttpRequest
+import com.journeyapps.barcodescanner.DecoratedBarcodeView
+import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import java.io.InputStream
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private const val PICK_IMAGE_REQUEST = 1
 
-class ScanFragment : Fragment() {
+class ScanFragment : Fragment(), DecoratedBarcodeView.TorchListener {
 
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var barcodeView: DecoratedBarcodeView
+    private var isScanning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +54,33 @@ class ScanFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        selectImageFromGallery()
+        showScanOptionsDialog()
+    }
+
+    private fun showScanOptionsDialog() {
+        val options = arrayOf("使用相机扫描", "从相册选择二维码图片")
+        AlertDialog.Builder(requireContext())
+            .setTitle("选择扫描方式")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> startCameraScan()
+                    1 -> selectImageFromGallery()
+                }
+            }
+            .setNegativeButton("取消") { _, _ ->
+                parentFragmentManager.popBackStack()
+            }
+            .show()
+    }
+
+    private fun startCameraScan() {
+        val integrator = com.journeyapps.barcodescanner.IntentIntegrator.forSupportFragment(this)
+        integrator.setDesiredBarcodeFormats(com.journeyapps.barcodescanner.IntentIntegrator.QR_CODE)
+        integrator.setPrompt("扫描二维码")
+        integrator.setCameraId(0)
+        integrator.setBeepEnabled(false)
+        integrator.setBarcodeImageEnabled(true)
+        integrator.initiateScan()
     }
 
     private fun selectImageFromGallery() {
@@ -58,13 +89,22 @@ class ScanFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             val uri: Uri? = data.data
             if (uri != null) {
                 val stream: InputStream? = context?.contentResolver?.openInputStream(uri)
                 val bitmap = BitmapFactory.decodeStream(stream)
                 if (bitmap != null) scanQRCodeFromBitmap(bitmap)
+            } else {
+                parentFragmentManager.popBackStack()
+            }
+        } else if (requestCode == com.journeyapps.barcodescanner.IntentIntegrator.REQUEST_CODE) {
+            val result = com.journeyapps.barcodescanner.IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+            if (result != null && result.contents != null) {
+                processQRResult(result.contents)
+            } else {
+                Toast.makeText(context, "扫描取消", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.popBackStack()
             }
         } else {
             parentFragmentManager.popBackStack()
