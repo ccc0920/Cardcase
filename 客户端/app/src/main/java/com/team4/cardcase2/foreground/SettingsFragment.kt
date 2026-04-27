@@ -31,6 +31,21 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(R.id.infoFragment)
         }
 
+        // Orders — open Taobao business card search
+        val taobaoUrl = "https://s.taobao.com/search?q=%E5%90%8D%E7%89%87%E5%8D%B0%E5%88%B7"
+        val orderAllRow: LinearLayout = root.findViewById(R.id.orderAllRow)
+        orderAllRow.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+        }
+        val orderDeliveryRow: LinearLayout = root.findViewById(R.id.orderDeliveryRow)
+        orderDeliveryRow.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+        }
+        val orderAftersaleRow: LinearLayout = root.findViewById(R.id.orderAftersaleRow)
+        orderAftersaleRow.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+        }
+
         // Contact Us
         val contactRow: LinearLayout = root.findViewById(R.id.group2)
         contactRow.setOnClickListener {

@@ -76,20 +76,30 @@ class CreateNewFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_create_new, container, false)
 
+        // Determine if we're editing an existing card
+        val editCardId = arguments?.getInt("cardId", 0) ?: 0
+        val isEditMode = editCardId > 0
+
+        val headerTitle: TextView = root.findViewById(R.id.headerTitle)
         val saveButton: Button = root.findViewById(R.id.saveButton)
         val inputFirstName: EditText = root.findViewById(R.id.inputFirstName)
         val inputSecondName: EditText = root.findViewById(R.id.inputSecondName)
         val showName: TextView = root.findViewById(R.id.showName)
+        val showTitle: TextView = root.findViewById(R.id.showTitle)
         val inputCompany: EditText = root.findViewById(R.id.inputCompany)
         val showCompany: TextView = root.findViewById(R.id.showCompany)
         val showPhone: TextView = root.findViewById(R.id.showPhone)
         val showEmail: TextView = root.findViewById(R.id.showEmail)
-        val showTitle: TextView = root.findViewById(R.id.showTitle)
         val inputPhone: EditText = root.findViewById(R.id.inputPhone)
         val inputEmail: EditText = root.findViewById(R.id.inputEmail)
         val backButton: TextView = root.findViewById(R.id.backButton)
         val inputTitle: EditText = root.findViewById(R.id.inputTitle)
         headImage = root.findViewById(R.id.imageView)
+
+        if (isEditMode) {
+            headerTitle.text = "Edit Card"
+            saveButton.text = "Update"
+        }
 
         headImage.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -104,6 +114,30 @@ class CreateNewFragment : Fragment() {
                 )
             } else {
                 openGallery()
+            }
+        }
+
+        // If editing, load existing card data and pre-fill
+        if (isEditMode) {
+            val ctx = requireContext()
+            val token = AppSession.getToken(ctx)
+            HttpRequest().sendGetRequest("http://10.0.2.2:8080/api/cards/$editCardId", token) { response, exception ->
+                activity?.runOnUiThread {
+                    if (exception != null || response == null) return@runOnUiThread
+                    try {
+                        val card = WholeServerCard.fromJson(response).card
+                        val name = card.elements.firstOrNull { it.type == "name" }?.content ?: ""
+                        val parts = name.trim().split(" ", limit = 2)
+                        inputFirstName.setText(parts.getOrElse(0) { "" })
+                        inputSecondName.setText(parts.getOrElse(1) { "" })
+                        inputTitle.setText(card.elements.firstOrNull { it.type == "title" }?.content ?: "")
+                        inputCompany.setText(card.elements.firstOrNull { it.type == "company" }?.content ?: "")
+                        inputPhone.setText(card.elements.firstOrNull { it.type == "phone" }?.content ?: "")
+                        inputEmail.setText(card.elements.firstOrNull { it.type == "email" }?.content ?: "")
+                    } catch (e: Exception) {
+                        // ignore
+                    }
+                }
             }
         }
 
@@ -130,18 +164,24 @@ class CreateNewFragment : Fragment() {
             val elements = mutableListOf(name, title, company, email, phone)
 
             val design = Design("", "", "", "")
-            val serverCard = ServerCard(0, false, userId, elements, "", "", design)
+            val serverCard = ServerCard(if (isEditMode) editCardId else 0, false, userId, elements, "", "", design)
             val jsonBody = serverCard.toJson()
-            val url = "http://10.0.2.2:8080/api/create-card"
+
+            val url = if (isEditMode) "http://10.0.2.2:8080/api/cards/$editCardId"
+                      else "http://10.0.2.2:8080/api/create-card"
 
             saveButton.isEnabled = false
-            HttpRequest().sendPostRequest(url, token, jsonBody) { response, exception ->
+            val http = HttpRequest()
+            val doRequest: (String, String, String, (String?, Exception?) -> Unit) -> Unit =
+                if (isEditMode) http::sendPutRequest else http::sendPostRequest
+
+            doRequest(url, token, jsonBody) { response, exception ->
                 activity?.runOnUiThread {
                     saveButton.isEnabled = true
                     if (exception != null) {
                         Toast.makeText(ctx, "Save failed: ${exception.message}", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(ctx, "Card saved!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(ctx, if (isEditMode) "Card updated!" else "Card saved!", Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.blankFragment)
                     }
                 }
@@ -149,13 +189,13 @@ class CreateNewFragment : Fragment() {
         }
 
         backButton.setOnClickListener {
-            findNavController().navigate(R.id.createCardFragment)
+            findNavController().navigate(R.id.blankFragment)
         }
 
         fun updateName() {
             val firstName = inputFirstName.text.toString()
             val secondName = inputSecondName.text.toString()
-            showName.text = "$firstName $secondName".trim()
+            showName.text = "$firstName $secondName".trim().ifEmpty { "Your Name" }
         }
 
         val nameWatcher = object : TextWatcher {

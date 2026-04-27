@@ -39,13 +39,22 @@ class CardDetailFragment : Fragment() {
         val showWechat: TextView = root.findViewById(R.id.showWechat)
         val qrView: ImageView = root.findViewById(R.id.qrView)
         val qrButton: Button = root.findViewById(R.id.qrButton)
+        val editButton: Button = root.findViewById(R.id.editButton)
         val backButton: TextView = root.findViewById(R.id.backButton)
+
+        qrView.visibility = View.GONE
+
+        val cardId = arguments?.getInt("cardId", 0) ?: 0
 
         backButton.setOnClickListener {
             findNavController().navigate(R.id.blankFragment)
         }
 
-        val cardId = arguments?.getInt("cardId", 0) ?: 0
+        editButton.setOnClickListener {
+            val bundle = Bundle().apply { putInt("cardId", cardId) }
+            findNavController().navigate(R.id.action_cardDetailFragment_to_createNewFragment, bundle)
+        }
+
         if (cardId > 0) {
             val ctx = requireContext()
             val token = AppSession.getToken(ctx)

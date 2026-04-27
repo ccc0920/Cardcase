@@ -32,10 +32,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ion_chevron_back"
-                    android:drawablePadding="4dp"
+                    android:drawablePadding="2dp"
+                    android:drawableTint="#FFFFFF"
                     android:text="Back"
-                    android:textColor="#C7D2FE"
-                    android:textSize="15sp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
                     android:padding="4dp" />
 
                 <!-- Large Avatar -->

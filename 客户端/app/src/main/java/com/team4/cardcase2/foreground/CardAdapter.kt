@@ -47,17 +47,21 @@ class CardAdapter(
         holder.cardFront.rotationY = 0f
         holder.cardBack.rotationY = 0f
 
-        holder.itemView.setOnClickListener {
-            if (flippedCards.contains(card.cardId)) {
-                flippedCards.remove(card.cardId)
-                flipToFront(holder)
-            } else {
-                flippedCards.add(card.cardId)
-                flipToBack(holder)
-            }
+        // Bind listeners on the faces directly — cardFront/cardBack fill the entire
+        // itemView, so touches land on them first and never reach itemView.
+        holder.cardFront.setOnClickListener {
+            flippedCards.add(card.cardId)
+            flipToBack(holder)
         }
-
-        holder.itemView.setOnLongClickListener {
+        holder.cardFront.setOnLongClickListener {
+            onLongPress?.invoke(card)
+            true
+        }
+        holder.cardBack.setOnClickListener {
+            flippedCards.remove(card.cardId)
+            flipToFront(holder)
+        }
+        holder.cardBack.setOnLongClickListener {
             onLongPress?.invoke(card)
             true
         }

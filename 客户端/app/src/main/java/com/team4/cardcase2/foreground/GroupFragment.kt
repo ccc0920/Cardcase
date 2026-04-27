@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -178,6 +176,7 @@ class GroupFragment : Fragment(), ButtonClickListener {
         val ctx = context ?: return
         val userId = AppSession.getUserId(ctx)
         val token = AppSession.getToken(ctx)
+        currentGroup = text
 
         if (text == "All Contacts" || text == "ACCEED") {
             loadAllContacts(userId)
@@ -192,9 +191,62 @@ class GroupFragment : Fragment(), ButtonClickListener {
         }
         activity?.runOnUiThread {
             cardLists = fetchedCards
-            cardAdapter = CardAdapter(fetchedCards)
+            cardAdapter = CardAdapter(fetchedCards) { card ->
+                showCardOptionsDialog(userId, card)
+            }
             cardView.adapter = cardAdapter
         }
+    }
+
+    private fun showCardOptionsDialog(userId: Int, card: ServerCard) {
+        val ctx = context ?: return
+        val cardName = card.elements.firstOrNull { it.type == "name" }?.content ?: "Card"
+        val allGroups = getGids(userId).filter { it != currentGroup && it != "All Contacts" }
+
+        val options = mutableListOf<String>()
+        if (allGroups.isNotEmpty()) options.add("Move to another group")
+        options.add("Remove from \"$currentGroup\"")
+
+        android.app.AlertDialog.Builder(ctx)
+            .setTitle(cardName)
+            .setItems(options.toTypedArray()) { _, which ->
+                when (options[which]) {
+                    "Move to another group" -> showGroupPickerDialog(userId, card, allGroups)
+                    else -> {
+                        removeCardFromGroup(userId, card.cardId, currentGroup)
+                        // refresh current group view
+                        MainScope().launch { rowClick(0, currentGroup) }
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showGroupPickerDialog(userId: Int, card: ServerCard, groups: List<String>) {
+        val ctx = context ?: return
+        var selectedIdx = 0
+        android.app.AlertDialog.Builder(ctx)
+            .setTitle("Move to group")
+            .setSingleChoiceItems(groups.toTypedArray(), 0) { _, which -> selectedIdx = which }
+            .setPositiveButton("Move") { _, _ ->
+                moveCardToGroup(userId, card.cardId, groups[selectedIdx])
+                MainScope().launch { rowClick(0, currentGroup) }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun moveCardToGroup(uid: Int, cid: Int, newGid: String) {
+        val db = requireContext().openOrCreateDatabase("sqlite.db", Context.MODE_PRIVATE, null)
+        db.execSQL("UPDATE SQLTable SET gid = ? WHERE uid = ? AND cid = ?", arrayOf(newGid, uid, cid))
+        db.close()
+    }
+
+    private fun removeCardFromGroup(uid: Int, cid: Int, gid: String) {
+        val db = requireContext().openOrCreateDatabase("sqlite.db", Context.MODE_PRIVATE, null)
+        db.execSQL("DELETE FROM SQLTable WHERE uid = ? AND cid = ? AND gid = ?", arrayOf(uid, cid, gid))
+        db.close()
     }
 
     private suspend fun fetchCard(cid: Int, token: String): ServerCard? =

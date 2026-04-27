@@ -33,7 +33,7 @@ class BlankFragment : Fragment(), ScanFragment.QRCodeScanResultListener {
 
         val addButton: Button = root.findViewById(R.id.addButton2)
         addButton.setOnClickListener {
-            findNavController().navigate(R.id.createCardFragment)
+            findNavController().navigate(R.id.createNewFragment)
         }
 
         val scanButton: Button = root.findViewById(R.id.scanButton2)

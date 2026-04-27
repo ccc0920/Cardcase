@@ -41,6 +41,24 @@ class HttpRequest {
         })
     }
 
+    fun sendPutRequest(url: String, authToken: String, jsonBody: String, callback: (String?, Exception?) -> Unit) {
+        val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $authToken")
+            .put(requestBody)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { callback(null, e) }
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!it.isSuccessful) { callback(null, IOException("Unexpected code $it")); return }
+                    callback(it.body?.string(), null)
+                }
+            }
+        })
+    }
+
     fun sendGetRequest(url: String, authToken: String, callback: (String?, Exception?) -> Unit) {
         // 创建URL
         val fullUrl = url

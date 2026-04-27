@@ -22,12 +22,16 @@
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:drawableLeft="@drawable/ion_chevron_back"
+            android:drawablePadding="2dp"
+            android:drawableTint="#6366F1"
+            android:text="Back"
             android:textColor="#6366F1"
             android:textSize="16sp"
-            android:paddingRight="8dp" />
+            android:padding="4dp" />
 
         <TextView
+            android:id="@+id/headerTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
