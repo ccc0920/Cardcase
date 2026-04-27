@@ -3,11 +3,14 @@ package com.team4.cardcase2.foreground
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.Elements
@@ -38,6 +41,30 @@ class CardAdapter(
         holder.showPhone.text = card.elements.getByType("phone")
         holder.showEmail.text = card.elements.getByType("email")
 
+        // Apply color theme to card front
+        val gradientRes = when (card.design.color) {
+            "purple" -> R.drawable.card_gradient_purple
+            "teal"   -> R.drawable.card_gradient_teal
+            "rose"   -> R.drawable.card_gradient_rose
+            "slate"  -> R.drawable.card_gradient_slate
+            else     -> R.drawable.card_gradient_blue
+        }
+        holder.cardFront.background = ContextCompat.getDrawable(holder.itemView.context, gradientRes)
+
+        // Avatar: decode Base64 if present, else show default icon
+        if (card.avatar.isNotEmpty()) {
+            try {
+                val bytes = Base64.decode(card.avatar, Base64.DEFAULT)
+                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                if (bmp != null) holder.cardAvatar.setImageBitmap(bmp)
+                else holder.cardAvatar.setImageResource(R.drawable.avatar_default)
+            } catch (e: Exception) {
+                holder.cardAvatar.setImageResource(R.drawable.avatar_default)
+            }
+        } else {
+            holder.cardAvatar.setImageResource(R.drawable.avatar_default)
+        }
+
         val qrBitmap = qrGenerator.generateQRCode(encoder.encode(card.cardId), 300, 300)
         holder.qrView.setImageBitmap(qrBitmap)
 
@@ -47,8 +74,7 @@ class CardAdapter(
         holder.cardFront.rotationY = 0f
         holder.cardBack.rotationY = 0f
 
-        // Bind listeners on the faces directly — cardFront/cardBack fill the entire
-        // itemView, so touches land on them first and never reach itemView.
+        // Listeners on faces directly — they fill itemView so touches land here first
         holder.cardFront.setOnClickListener {
             flippedCards.add(card.cardId)
             flipToBack(holder)
@@ -122,6 +148,7 @@ class CardAdapter(
         val showPhone: TextView = itemView.findViewById(R.id.showPhone)
         val showEmail: TextView = itemView.findViewById(R.id.showEmail)
         val qrView: ImageView = itemView.findViewById(R.id.qrView)
+        val cardAvatar: ImageView = itemView.findViewById(R.id.cardAvatar)
     }
 
     private fun List<Elements>.getByType(type: String): String =

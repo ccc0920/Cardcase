@@ -67,6 +67,7 @@
 
             <!-- Live card preview -->
             <LinearLayout
+                android:id="@+id/previewCard"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:layout_marginLeft="24dp"
@@ -119,7 +120,9 @@
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:background="@drawable/avatar_bg"
-                        android:padding="2dp" />
+                        android:src="@drawable/avatar_default"
+                        android:scaleType="centerCrop"
+                        android:clipToOutline="true" />
 
                 </LinearLayout>
 
@@ -172,14 +175,83 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Hint row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="28dp"
-                android:layout_marginBottom="8dp"
-                android:text="Tap avatar to change photo"
-                android:textColor="#86868B"
-                android:textSize="12sp" />
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tap avatar to change photo"
+                    android:textColor="#86868B"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Card color"
+                    android:textColor="#86868B"
+                    android:textSize="12sp"
+                    android:layout_marginRight="8dp" />
+
+            </LinearLayout>
+
+            <!-- Color picker row -->
+            <LinearLayout
+                android:id="@+id/colorPickerRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/card_premium"
+                android:elevation="1dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
+
+                <!-- Blue (default) -->
+                <FrameLayout android:layout_width="36dp" android:layout_height="36dp" android:layout_marginRight="10dp">
+                    <View android:id="@+id/swatchBlue" android:layout_width="30dp" android:layout_height="30dp" android:layout_gravity="center" android:background="@drawable/card_gradient_blue" />
+                    <View android:id="@+id/swatchBlueSel" android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/swatch_selected" android:visibility="visible" />
+                </FrameLayout>
+
+                <!-- Purple -->
+                <FrameLayout android:layout_width="36dp" android:layout_height="36dp" android:layout_marginRight="10dp">
+                    <View android:id="@+id/swatchPurple" android:layout_width="30dp" android:layout_height="30dp" android:layout_gravity="center" android:background="@drawable/card_gradient_purple" />
+                    <View android:id="@+id/swatchPurpleSel" android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/swatch_selected" android:visibility="invisible" />
+                </FrameLayout>
+
+                <!-- Teal -->
+                <FrameLayout android:layout_width="36dp" android:layout_height="36dp" android:layout_marginRight="10dp">
+                    <View android:id="@+id/swatchTeal" android:layout_width="30dp" android:layout_height="30dp" android:layout_gravity="center" android:background="@drawable/card_gradient_teal" />
+                    <View android:id="@+id/swatchTealSel" android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/swatch_selected" android:visibility="invisible" />
+                </FrameLayout>
+
+                <!-- Rose -->
+                <FrameLayout android:layout_width="36dp" android:layout_height="36dp" android:layout_marginRight="10dp">
+                    <View android:id="@+id/swatchRose" android:layout_width="30dp" android:layout_height="30dp" android:layout_gravity="center" android:background="@drawable/card_gradient_rose" />
+                    <View android:id="@+id/swatchRoseSel" android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/swatch_selected" android:visibility="invisible" />
+                </FrameLayout>
+
+                <!-- Slate -->
+                <FrameLayout android:layout_width="36dp" android:layout_height="36dp">
+                    <View android:id="@+id/swatchSlate" android:layout_width="30dp" android:layout_height="30dp" android:layout_gravity="center" android:background="@drawable/card_gradient_slate" />
+                    <View android:id="@+id/swatchSlateSel" android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/swatch_selected" android:visibility="invisible" />
+                </FrameLayout>
+
+            </LinearLayout>
 
             <!-- Name section -->
             <TextView

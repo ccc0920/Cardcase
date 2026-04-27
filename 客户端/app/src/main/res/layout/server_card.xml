@@ -4,7 +4,7 @@
     android:layout_height="160dp"
     android:layout_marginBottom="16dp">
 
-    <!-- Front face: gradient blue business card -->
+    <!-- Front face -->
     <LinearLayout
         android:id="@+id/cardFront"
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
         android:padding="20dp"
         android:clipToOutline="true">
 
+        <!-- Top row: name/title on left, avatar on right -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,16 +49,19 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="&#x25C9;"
-                android:textColor="#FFFFFF"
-                android:textSize="8sp"
-                android:alpha="0.4" />
+            <!-- Circular avatar -->
+            <ImageView
+                android:id="@+id/cardAvatar"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/avatar_bg"
+                android:src="@drawable/avatar_default"
+                android:scaleType="centerCrop"
+                android:clipToOutline="true" />
 
         </LinearLayout>
 
+        <!-- Spacer -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -104,7 +108,7 @@
 
     </LinearLayout>
 
-    <!-- Back face: white with QR code (tap to flip back) -->
+    <!-- Back face: white with QR code -->
     <LinearLayout
         android:id="@+id/cardBack"
         android:layout_width="match_parent"

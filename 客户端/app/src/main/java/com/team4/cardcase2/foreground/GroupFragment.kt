@@ -94,7 +94,9 @@ class GroupFragment : Fragment(), ButtonClickListener {
                         val result = UserCardsResponse.fromJson(response)
                         if (result.success) {
                             cardLists = result.cards.toMutableList()
-                            cardAdapter = CardAdapter(cardLists)
+                            cardAdapter = CardAdapter(cardLists) { card ->
+                                showAddToGroupDialog(userId, card)
+                            }
                             cardView.adapter = cardAdapter
                         }
                     } catch (e: Exception) {
@@ -103,6 +105,44 @@ class GroupFragment : Fragment(), ButtonClickListener {
                 }
             }
         }
+    }
+
+    private fun showAddToGroupDialog(userId: Int, card: ServerCard) {
+        val ctx = context ?: return
+        val cardName = card.elements.firstOrNull { it.type == "name" }?.content ?: "Card"
+        val groups = getGids(userId).toTypedArray()
+        if (groups.isEmpty()) {
+            Toast.makeText(ctx, "Create a group first", Toast.LENGTH_SHORT).show()
+            return
+        }
+        var selectedIdx = 0
+        android.app.AlertDialog.Builder(ctx)
+            .setTitle("Add \"$cardName\" to group")
+            .setSingleChoiceItems(groups, 0) { _, which -> selectedIdx = which }
+            .setPositiveButton("Add") { _, _ ->
+                addCardToGroup(userId, card.cardId, groups[selectedIdx])
+                Toast.makeText(ctx, "Added to ${groups[selectedIdx]}", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun addCardToGroup(uid: Int, cid: Int, gid: String) {
+        val db = requireContext().openOrCreateDatabase("sqlite.db", Context.MODE_PRIVATE, null)
+        db.execSQL("CREATE TABLE IF NOT EXISTS SQLTable(uid INTEGER, cid INTEGER, gid TEXT)")
+        val cursor = db.rawQuery(
+            "SELECT COUNT(*) FROM SQLTable WHERE uid = ? AND cid = ? AND gid = ?",
+            arrayOf(uid.toString(), cid.toString(), gid)
+        )
+        cursor.moveToFirst()
+        if (cursor.getInt(0) == 0) {
+            val cv = android.content.ContentValues().apply {
+                put("uid", uid); put("cid", cid); put("gid", gid)
+            }
+            db.insert("SQLTable", null, cv)
+        }
+        cursor.close()
+        db.close()
     }
 
     private fun showInputDialog(userId: Int) {
