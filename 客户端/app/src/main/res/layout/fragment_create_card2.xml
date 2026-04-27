@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".foreground.CreateCardFragment2">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/backButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="Back" />
+
+        <Button
+            android:id="@+id/button_create_new"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:width="320dp"
+            android:height="100dp"
+            android:layout_margin="20dp"
+            android:text="Create new" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myCardView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</FrameLayout>

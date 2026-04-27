@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources><style name="MyButtonStyle" parent="Widget.AppCompat.Button">
+    <!-- 设置按钮的背景颜色 -->
+    <item name="android:background">@drawable/mybutton</item>
+    <!-- 设置按钮的文本颜色 -->
+    <item name="android:textColor">@android:color/white</item>
+    <!-- 设置按钮的文本大小 -->
+    <item name="android:textSize">16sp</item>
+    <!-- 其他自定义属性 -->
+</style>
+</resources>

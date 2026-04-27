@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:layout_marginBottom="16dp">
+
+    <!-- Front face: gradient blue business card -->
+    <LinearLayout
+        android:id="@+id/cardFront"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/card_gradient_blue"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:clipToOutline="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/showName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/showTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textColor="#C7D2FE"
+                    android:textSize="13sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&#x25C9;"
+                android:textColor="#FFFFFF"
+                android:textSize="8sp"
+                android:alpha="0.4" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/showCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#C7D2FE"
+            android:textSize="11sp"
+            android:letterSpacing="0.08"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/showPhone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/showEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:gravity="end" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Back face: white with QR code (tap to flip back) -->
+    <LinearLayout
+        android:id="@+id/cardBack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/card_premium"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:clipToOutline="true">
+
+        <ImageView
+            android:id="@+id/qrView"
+            android:layout_width="120dp"
+            android:layout_height="120dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Tap to flip back"
+            android:textColor="#86868B"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+    <!-- Hidden stubs for old code compatibility -->
+    <ImageView android:id="@+id/imageView2" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <ImageView android:id="@+id/imageView3" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <ImageView android:id="@+id/imageView4" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+
+</FrameLayout>

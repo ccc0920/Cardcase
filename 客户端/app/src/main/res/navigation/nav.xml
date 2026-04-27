@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/blankFragment">
+
+    <fragment
+        android:id="@+id/createCardFragment"
+        android:name="com.team4.cardcase2.foreground.CreateCardFragment"
+        android:label="fragment_create_card"
+        tools:layout="@layout/fragment_create_card" >
+        <action
+            android:id="@+id/action_createCardFragment_to_createNewFragment"
+            app:destination="@id/createNewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createNewFragment"
+        android:name="com.team4.cardcase2.foreground.CreateNewFragment"
+        android:label="fragment_create_new"
+        tools:layout="@layout/fragment_create_new" >
+        <action
+            android:id="@+id/action_createNewFragment_to_createCardFragment"
+            app:destination="@id/createCardFragment" />
+        <action
+            android:id="@+id/action_createNewFragment_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_createNewFragment_to_createCardFragment2"
+            app:destination="@id/createCardFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="com.team4.cardcase2.foreground.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_blank" >
+        <action
+            android:id="@+id/action_blankFragment_to_createCardFragment"
+            app:destination="@id/createCardFragment" />
+        <action
+            android:id="@+id/action_blankFragment_to_cardDetailFragment"
+            app:destination="@id/cardDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cardDetailFragment"
+        android:name="com.team4.cardcase2.foreground.CardDetailFragment"
+        android:label="fragment_card_detail"
+        tools:layout="@layout/fragment_card_detail" >
+        <action
+            android:id="@+id/action_cardDetailFragment_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createCardFragment2"
+        android:name="com.team4.cardcase2.foreground.CreateCardFragment2"
+        android:label="fragment_create_card2"
+        tools:layout="@layout/fragment_create_card2" >
+        <action
+            android:id="@+id/action_createCardFragment2_to_blankFragment2"
+            app:destination="@id/blankFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/blankFragment2"
+        android:name="com.team4.cardcase2.foreground.BlankFragment2"
+        android:label="BlankFragment2" />
+</navigation>

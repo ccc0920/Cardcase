@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/settingsFragment">
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.team4.cardcase2.foreground.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_infoFragment2"
+            app:destination="@id/infoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.team4.cardcase2.foreground.InfoFragment"
+        android:label="fragment_info"
+        tools:layout="@layout/fragment_info" >
+        <action
+            android:id="@+id/action_infoFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_infoFragment_to_nameFragment"
+            app:destination="@id/nameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nameFragment"
+        android:name="com.team4.cardcase2.foreground.NameFragment"
+        android:label="fragment_name"
+        tools:layout="@layout/fragment_name" >
+        <action
+            android:id="@+id/action_nameFragment_to_info1Fragment"
+            app:destination="@id/info1Fragment" />
+        <action
+            android:id="@+id/action_nameFragment_to_infoFragment"
+            app:destination="@id/infoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/genderFragment"
+        android:name="com.team4.cardcase2.foreground.GenderFragment"
+        android:label="fragment_gender"
+        tools:layout="@layout/fragment_gender" >
+        <action
+            android:id="@+id/action_genderFragment_to_info2Fragment"
+            app:destination="@id/info2Fragment" />
+        <action
+            android:id="@+id/action_genderFragment_to_info1Fragment"
+            app:destination="@id/info1Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/emailFragment"
+        android:name="com.team4.cardcase2.foreground.EmailFragment"
+        android:label="fragment_email"
+        tools:layout="@layout/fragment_email" >
+        <action
+            android:id="@+id/action_emailFragment_to_info2Fragment"
+            app:destination="@id/info2Fragment" />
+        <action
+            android:id="@+id/action_emailFragment_to_veriFragment"
+            app:destination="@id/veriFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/info1Fragment"
+        android:name="com.team4.cardcase2.foreground.Info1Fragment"
+        android:label="Info1Fragment" >
+        <action
+            android:id="@+id/action_info1Fragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_info1Fragment_to_genderFragment"
+            app:destination="@id/genderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/info2Fragment"
+        android:name="com.team4.cardcase2.foreground.Info2Fragment"
+        android:label="Info2Fragment" >
+        <action
+            android:id="@+id/action_info2Fragment_to_emailFragment"
+            app:destination="@id/emailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/veriFragment"
+        android:name="com.team4.cardcase2.foreground.VeriFragment"
+        android:label="VeriFragment" >
+        <action
+            android:id="@+id/action_veriFragment_to_emailFragment"
+            app:destination="@id/emailFragment" />
+        <action
+            android:id="@+id/action_veriFragment_to_info3Fragment"
+            app:destination="@id/info3Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/info3Fragment"
+        android:name="com.team4.cardcase2.foreground.Info3Fragment"
+        android:label="Info3Fragment" >
+        <action
+            android:id="@+id/action_info3Fragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+</navigation>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav2"
+    app:startDestination="@id/wrench1Fragment">
+
+    <fragment
+        android:id="@+id/wrench1Fragment"
+        android:name="com.team4.cardcase2.foreground.Wrench1Fragment"
+        android:label="fragment_wrench1"
+        tools:layout="@layout/fragment_wrench1" >
+        <action
+            android:id="@+id/action_wrench1Fragment_to_wrench2Fragment"
+            app:destination="@id/wrench2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/wrench2Fragment"
+        android:name="com.team4.cardcase2.foreground.Wrench2Fragment"
+        android:label="fragment_wrench2"
+        tools:layout="@layout/fragment_wrench2" />
+</navigation>

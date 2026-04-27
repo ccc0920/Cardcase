@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F7"
+    tools:context=".foreground.CardDetailFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Gradient header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/hero_gradient"
+                android:orientation="vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="40dp">
+
+                <TextView
+                    android:id="@+id/backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ion_chevron_back"
+                    android:drawablePadding="4dp"
+                    android:text="Back"
+                    android:textColor="#C7D2FE"
+                    android:textSize="15sp"
+                    android:padding="4dp" />
+
+                <!-- Large Avatar -->
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/avatar_bg"
+                    tools:src="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/showName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Full Name"
+                    android:textColor="#FFFFFF"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/showCompany"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Company"
+                    android:textColor="#C7D2FE"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <!-- Quick info card (overlapping header) -->
+            <LinearLayout
+                android:id="@+id/showInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="-20dp"
+                android:background="@drawable/card_premium"
+                android:elevation="6dp"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <ImageView android:id="@+id/imageView3" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/phone" android:layout_gravity="center" />
+                    <TextView android:id="@+id/showPhone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="—" android:textColor="#1D1D1F" android:textSize="13sp" android:gravity="center" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Phone" android:textColor="#86868B" android:textSize="11sp" />
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="match_parent" android:background="#F0F0F5" android:layout_marginLeft="8dp" android:layout_marginRight="8dp" />
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <ImageView android:id="@+id/imageView4" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/email" android:layout_gravity="center" />
+                    <TextView android:id="@+id/showEmail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="—" android:textColor="#1D1D1F" android:textSize="13sp" android:gravity="center" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Email" android:textColor="#86868B" android:textSize="11sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Details card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/card_premium"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="16dp" android:text="DETAILS" android:textColor="#86868B" android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.1" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:id="@+id/textView26" android:layout_width="90dp" android:layout_height="wrap_content" android:text="Name" android:textColor="#86868B" android:textSize="14sp" />
+                    <TextView android:id="@+id/showName2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="—" android:textColor="#1D1D1F" android:textSize="15sp" android:textStyle="bold" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F5F5F7" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:id="@+id/textView28" android:layout_width="90dp" android:layout_height="wrap_content" android:text="Email" android:textColor="#86868B" android:textSize="14sp" />
+                    <TextView android:id="@+id/showEmail2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="—" android:textColor="#1D1D1F" android:textSize="15sp" android:textStyle="bold" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F5F5F7" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:id="@+id/textView30" android:layout_width="90dp" android:layout_height="wrap_content" android:text="Address" android:textColor="#86868B" android:textSize="14sp" />
+                    <TextView android:id="@+id/showAddress2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="—" android:textColor="#1D1D1F" android:textSize="15sp" android:textStyle="bold" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F5F5F7" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:id="@+id/textView32" android:layout_width="90dp" android:layout_height="wrap_content" android:text="Phone" android:textColor="#86868B" android:textSize="14sp" />
+                    <TextView android:id="@+id/showPhone2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="—" android:textColor="#1D1D1F" android:textSize="15sp" android:textStyle="bold" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F5F5F7" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:id="@+id/textView34" android:layout_width="90dp" android:layout_height="wrap_content" android:text="WeChat" android:textColor="#86868B" android:textSize="14sp" />
+                    <TextView android:id="@+id/showWechat" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="—" android:textColor="#1D1D1F" android:textSize="15sp" android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Action buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="horizontal">
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="80dp" android:layout_weight="1" android:layout_marginRight="8dp" android:background="@drawable/card_premium" android:elevation="2dp" android:gravity="center" android:orientation="vertical">
+                    <Button android:id="@+id/editButton" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/pencil_03" android:padding="0dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Edit" android:textColor="#86868B" android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="80dp" android:layout_weight="1" android:layout_marginLeft="8dp" android:background="@drawable/btn_filled" android:elevation="4dp" android:gravity="center" android:orientation="vertical">
+                    <Button android:id="@+id/qrButton" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/qr_code_02" android:padding="0dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="QR Code" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- QR View -->
+            <ImageView
+                android:id="@+id/qrView"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="32dp"
+                tools:src="@tools:sample/avatars" />
+
+            <!-- Hidden stubs -->
+            <ImageView android:id="@+id/imageView2" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

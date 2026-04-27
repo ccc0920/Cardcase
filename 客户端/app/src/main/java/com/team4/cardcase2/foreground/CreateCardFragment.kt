@@ -1,0 +1,112 @@
+package com.team4.cardcase2.foreground
+
+import android.annotation.SuppressLint
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.R
+import com.team4.cardcase2.entity.UserCardsResponse
+import com.team4.cardcase2.interfaces.HttpRequest
+
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+class CreateCardFragment : Fragment() {
+
+    private var param1: String? = null
+    private var param2: String? = null
+    private lateinit var myCardView: RecyclerView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
+        }
+    }
+
+    @SuppressLint("MissingInflatedId")
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val root = inflater.inflate(R.layout.fragment_create_card, container, false)
+
+        val startButton: Button = root.findViewById(R.id.button_create_new)
+        startButton.setOnClickListener {
+            findNavController().navigate(R.id.createNewFragment)
+        }
+
+        myCardView = root.findViewById(R.id.myCardView)
+        myCardView.layoutManager = LinearLayoutManager(requireContext())
+        loadCards()
+
+        val backButton: TextView = root.findViewById(R.id.backButton2)
+        backButton.setOnClickListener {
+            findNavController().navigate(R.id.blankFragment)
+        }
+
+        return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadCards()
+    }
+
+    private fun loadCards() {
+        val ctx = context ?: return
+        val userId = AppSession.getUserId(ctx)
+        val token = AppSession.getToken(ctx)
+        if (userId == 0 || token.isEmpty()) return
+
+        HttpRequest().sendGetRequest("http://10.0.2.2:8080/api/cards/user/$userId", token) { response, exception ->
+            activity?.runOnUiThread {
+                if (exception != null) {
+                    Toast.makeText(ctx, "Failed to load cards", Toast.LENGTH_SHORT).show()
+                    return@runOnUiThread
+                }
+                try {
+                    val result = UserCardsResponse.fromJson(response!!)
+                    if (result.success) {
+                        myCardView.adapter = CardAdapter(result.cards)
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(ctx, "Error parsing cards", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    companion object {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment CreateCardFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            CreateCardFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+        @JvmStatic
+        fun newInstance() =
+            CreateCardFragment()
+    }
+}

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/nameFragment"
+    tools:context=".foreground.NameFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#F2F2F7">
+
+
+        <ImageButton
+            android:id="@+id/backLast"
+            android:layout_width="38dp"
+            android:layout_height="37dp"
+            android:background="#F2F2F7"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="52dp"
+            android:src="@drawable/ion_chevron_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/gonext"
+            style="@style/MyButtonStyle"
+            android:layout_width="78dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="284dp"
+            android:layout_marginTop="52dp"
+            android:background="@drawable/rounded_button"
+            android:text="Save"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="119dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="146dp"
+            android:layout_marginTop="60dp"
+            android:text="Set Full Name"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_marginTop="100dp"
+            android:background="#FFFFFF"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/clear"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:layout_marginStart="332dp"
+                android:layout_marginTop="20dp"
+                android:background="#FFFFFF"
+                android:src="@drawable/x_circle_contained"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/nameEdit"
+                android:layout_width="104dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:autofillHints="Kobe Bryant"
+                android:fontFamily="sans-serif-medium"
+                android:inputType="text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

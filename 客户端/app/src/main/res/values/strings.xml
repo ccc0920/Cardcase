@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">CardCase2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="in_delivery">In Delivery</string>
+    <string name="_123456789_qq_com" />
+    <string name="back_button_desc">Back</string>
+    <string name="already_have_account_desc">Already have an account?</string>
+    <string name="log_in_button_desc">Log in button</string>
+    <string name="phone">phone</string>
+    <string name="textview">TextView</string>
+    <string name="todo" />
+</resources>

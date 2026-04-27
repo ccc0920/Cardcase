@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/emainFragment"
+    tools:context=".foreground.EmailFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F2F2F7">
+
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="119dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="146dp"
+            android:layout_marginTop="60dp"
+            android:text="Set Email Address"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/backLast"
+            android:layout_width="38dp"
+            android:background="#F2F2F7"
+            android:layout_height="37dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="52dp"
+            android:src="@drawable/ion_chevron_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/gonext"
+            style="@style/MyButtonStyle"
+            android:layout_width="78dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="284dp"
+            android:layout_marginTop="52dp"
+            android:background="@drawable/rounded_button"
+            android:text="Next"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="100dp"
+            android:background="#FFFFFF"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/Edit17"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:hint="@string/_123456789_qq_com"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/imageView16"
+                android:layout_width="21dp"
+                android:background="#FFFFFF"
+                android:layout_height="21dp"
+                android:layout_marginStart="332dp"
+                android:layout_marginTop="14dp"
+                android:src="@drawable/x_circle_contained"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

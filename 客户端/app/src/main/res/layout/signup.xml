@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <!-- Nav -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <ImageButton
+                android:id="@+id/backbutton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icon_btn_bg"
+                android:src="@drawable/ion_chevron_back"
+                android:contentDescription="@string/back_button_desc"
+                android:padding="10dp" />
+
+            <TextView
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Back"
+                android:textColor="#86868B"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/signUpTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Create your&#10;account."
+            android:textColor="#1D1D1F"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp"
+            android:letterSpacing="-0.02" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Join thousands managing their cards"
+            android:textColor="#86868B"
+            android:textSize="16sp" />
+
+        <!-- Full Name -->
+        <TextView
+            android:id="@+id/full_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="FULL NAME"
+            android:textColor="#1D1D1F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <EditText
+            android:id="@+id/fullname_string"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/field_bg"
+            android:hint="Your full name"
+            android:inputType="textPersonName"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:textColor="#1D1D1F"
+            android:textColorHint="#AEAEB2"
+            android:textSize="16sp" />
+
+        <!-- Email -->
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="EMAIL"
+            android:textColor="#1D1D1F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <EditText
+            android:id="@+id/email_string"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/field_bg"
+            android:hint="you@example.com"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:textColor="#1D1D1F"
+            android:textColorHint="#AEAEB2"
+            android:textSize="16sp" />
+
+        <!-- Password -->
+        <TextView
+            android:id="@+id/password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="PASSWORD"
+            android:textColor="#1D1D1F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <EditText
+            android:id="@+id/password_string"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/field_bg"
+            android:hint="Create a strong password"
+            android:inputType="textPassword"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:textColor="#1D1D1F"
+            android:textColorHint="#AEAEB2"
+            android:textSize="16sp" />
+
+        <!-- Confirm Password -->
+        <TextView
+            android:id="@+id/confirmpassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="CONFIRM PASSWORD"
+            android:textColor="#1D1D1F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <EditText
+            android:id="@+id/confirmpassword_string"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/field_bg"
+            android:hint="Repeat your password"
+            android:inputType="textPassword"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:textColor="#1D1D1F"
+            android:textColorHint="#AEAEB2"
+            android:textSize="16sp" />
+
+        <!-- CTA -->
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="36dp"
+            android:background="@drawable/btn_filled"
+            android:elevation="4dp"
+            android:text="Create Account"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <!-- Footer -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/logInLink1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already have an account?"
+                android:textColor="#86868B"
+                android:textSize="15sp"
+                android:contentDescription="@string/already_have_account_desc" />
+
+            <Button
+                android:id="@+id/logInLink_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:text="Sign in"
+                android:textColor="#4F46E5"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:contentDescription="@string/log_in_button_desc"
+                android:paddingLeft="6dp"
+                android:paddingRight="0dp"
+                android:minHeight="0dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

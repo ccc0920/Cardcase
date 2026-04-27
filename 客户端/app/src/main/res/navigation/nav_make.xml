@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_make"
+    app:startDestination="@id/make1Fragment">
+
+    <fragment
+        android:id="@+id/make2Fragment"
+        android:name="com.team4.cardcase2.foreground.Make2Fragment"
+        android:label="fragment_make2"
+        tools:layout="@layout/fragment_make2" >
+        <action
+            android:id="@+id/action_make2Fragment_to_make1Fragment"
+            app:destination="@id/make1Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/make3Fragment"
+        android:name="com.team4.cardcase2.foreground.Make3Fragment"
+        android:label="fragment_make3"
+        tools:layout="@layout/fragment_make3" >
+        <action
+            android:id="@+id/action_make3Fragment_to_make2Fragment"
+            app:destination="@id/make2Fragment" />
+        <action
+            android:id="@+id/action_make3Fragment_to_payFragment"
+            app:destination="@id/payFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/payFragment"
+        android:name="com.team4.cardcase2.foreground.PayFragment"
+        android:label="fragment_pay"
+        tools:layout="@layout/fragment_pay" >
+        <action
+            android:id="@+id/action_payFragment_to_make4Fragment"
+            app:destination="@id/make4Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/make4Fragment"
+        android:name="com.team4.cardcase2.foreground.Make4Fragment"
+        android:label="fragment_make4"
+        tools:layout="@layout/fragment_make4" >
+        <action
+            android:id="@+id/action_make4Fragment_to_make2Fragment"
+            app:destination="@id/make2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/make1Fragment"
+        android:name="com.team4.cardcase2.foreground.Make1Fragment"
+        android:label="fragment_make1"
+        tools:layout="@layout/fragment_make1" >
+        <action
+            android:id="@+id/action_make1Fragment_to_make2Fragment"
+            app:destination="@id/make2Fragment" />
+        <action
+            android:id="@+id/action_make1Fragment_to_make3Fragment"
+            app:destination="@id/make3Fragment" />
+    </fragment>
+</navigation>
