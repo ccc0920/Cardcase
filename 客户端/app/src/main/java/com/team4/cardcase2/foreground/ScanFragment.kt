@@ -24,20 +24,16 @@ import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.Encoder
 import com.team4.cardcase2.entity.WholeServerCard
 import com.team4.cardcase2.interfaces.HttpRequest
-import com.journeyapps.barcodescanner.DecoratedBarcodeView
-import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import java.io.InputStream
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private const val PICK_IMAGE_REQUEST = 1
 
-class ScanFragment : Fragment(), DecoratedBarcodeView.TorchListener {
+class ScanFragment : Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null
-    private lateinit var barcodeView: DecoratedBarcodeView
-    private var isScanning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,13 +70,25 @@ class ScanFragment : Fragment(), DecoratedBarcodeView.TorchListener {
     }
 
     private fun startCameraScan() {
-        val integrator = com.journeyapps.barcodescanner.IntentIntegrator.forSupportFragment(this)
-        integrator.setDesiredBarcodeFormats(com.journeyapps.barcodescanner.IntentIntegrator.QR_CODE)
-        integrator.setPrompt("扫描二维码")
-        integrator.setCameraId(0)
-        integrator.setBeepEnabled(false)
-        integrator.setBarcodeImageEnabled(true)
-        integrator.initiateScan()
+        val options = com.journeyapps.barcodescanner.ScanOptions().apply {
+            setDesiredBarcodeFormats(com.journeyapps.barcodescanner.ScanOptions.QR_CODE)
+            setPrompt("扫描二维码")
+            setCameraId(0)
+            setBeepEnabled(false)
+            setBarcodeImageEnabled(true)
+        }
+        scanLauncher.launch(options)
+    }
+
+    private val scanLauncher = registerForActivityResult(
+        com.journeyapps.barcodescanner.ScanContract()
+    ) { result ->
+        if (result.contents != null) {
+            processQRResult(result.contents)
+        } else {
+            Toast.makeText(context, "扫描取消", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+        }
     }
 
     private fun selectImageFromGallery() {
@@ -96,14 +104,6 @@ class ScanFragment : Fragment(), DecoratedBarcodeView.TorchListener {
                 val bitmap = BitmapFactory.decodeStream(stream)
                 if (bitmap != null) scanQRCodeFromBitmap(bitmap)
             } else {
-                parentFragmentManager.popBackStack()
-            }
-        } else if (requestCode == com.journeyapps.barcodescanner.IntentIntegrator.REQUEST_CODE) {
-            val result = com.journeyapps.barcodescanner.IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-            if (result != null && result.contents != null) {
-                processQRResult(result.contents)
-            } else {
-                Toast.makeText(context, "扫描取消", Toast.LENGTH_SHORT).show()
                 parentFragmentManager.popBackStack()
             }
         } else {

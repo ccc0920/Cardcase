@@ -2,6 +2,7 @@ package com.team4.cardcase2.foreground
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.team4.cardcase2.AppSession
 import com.team4.cardcase2.R
@@ -18,32 +20,33 @@ import com.team4.cardcase2.Start
 
 class SettingsFragment : Fragment() {
 
+    private var _root: View? = null
+
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_settings, container, false)
+        _root = root
+
+        populateHeader(root)
 
         // Edit profile button
         val editProfileButton: ImageButton = root.findViewById(R.id.imageView9)
         editProfileButton.setOnClickListener {
-            findNavController().navigate(R.id.infoFragment)
+            findNavController().navigate(R.id.action_settingsFragment_to_infoFragment2)
         }
 
-        // Orders — open Taobao business card search
-        val taobaoUrl = "https://s.taobao.com/search?q=%E5%90%8D%E7%89%87%E5%8D%B0%E5%88%B7"
-        val orderAllRow: LinearLayout = root.findViewById(R.id.orderAllRow)
-        orderAllRow.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+        // Orders — show local order history
+        root.findViewById<LinearLayout>(R.id.orderAllRow).setOnClickListener {
+            showOrderDialog(null)
         }
-        val orderDeliveryRow: LinearLayout = root.findViewById(R.id.orderDeliveryRow)
-        orderDeliveryRow.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+        root.findViewById<LinearLayout>(R.id.orderDeliveryRow).setOnClickListener {
+            showOrderDialog("pending")
         }
-        val orderAftersaleRow: LinearLayout = root.findViewById(R.id.orderAftersaleRow)
-        orderAftersaleRow.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+        root.findViewById<LinearLayout>(R.id.orderAftersaleRow).setOnClickListener {
+            showOrderDialog("delivered")
         }
 
         // Contact Us
@@ -91,6 +94,71 @@ class SettingsFragment : Fragment() {
         }
 
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        _root?.let { populateHeader(it) }
+    }
+
+    private fun populateHeader(root: View) {
+        val ctx = requireContext()
+        val name = AppSession.getUserName(ctx).ifEmpty { "Your Name" }
+        val email = AppSession.getEmail(ctx).ifEmpty { "Tap to edit profile" }
+        root.findViewById<TextView>(R.id.settingsNameText).text = name
+        root.findViewById<TextView>(R.id.settingsEmailText).text = email
+    }
+
+    private fun showOrderDialog(statusFilter: String?) {
+        val ctx = requireContext()
+        val uid = AppSession.getUserId(ctx)
+        val title = when (statusFilter) {
+            "pending"   -> "In Delivery"
+            "delivered" -> "After-sale"
+            else        -> "All Orders"
+        }
+
+        val db = ctx.openOrCreateDatabase("sqlite.db", Context.MODE_PRIVATE, null)
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                uid INTEGER, card_id INTEGER, card_name TEXT,
+                material TEXT, qty INTEGER, unit_price REAL, total REAL,
+                recip_name TEXT, recip_phone TEXT, recip_address TEXT,
+                status TEXT DEFAULT 'pending', timestamp INTEGER
+            )
+        """.trimIndent())
+
+        val query = if (statusFilter != null)
+            "SELECT * FROM orders WHERE uid = ? AND status = ? ORDER BY timestamp DESC"
+        else
+            "SELECT * FROM orders WHERE uid = ? ORDER BY timestamp DESC"
+        val args = if (statusFilter != null) arrayOf(uid.toString(), statusFilter) else arrayOf(uid.toString())
+        val cursor = db.rawQuery(query, args)
+
+        val lines = mutableListOf<String>()
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))
+                val cardName = cursor.getString(cursor.getColumnIndexOrThrow("card_name")) ?: ""
+                val material = cursor.getString(cursor.getColumnIndexOrThrow("material")) ?: ""
+                val qty = cursor.getInt(cursor.getColumnIndexOrThrow("qty"))
+                val total = cursor.getDouble(cursor.getColumnIndexOrThrow("total"))
+                val status = cursor.getString(cursor.getColumnIndexOrThrow("status")) ?: "pending"
+                val statusLabel = if (status == "delivered") "Delivered" else "In Delivery"
+                lines.add("#$id  $cardName\n$material × $qty  ¥%.2f  [$statusLabel]".format(total))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+
+        val message = if (lines.isEmpty()) "No orders yet.\n\nPlace your first order from the Wrench tab." else lines.joinToString("\n\n")
+
+        AlertDialog.Builder(ctx)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     companion object {

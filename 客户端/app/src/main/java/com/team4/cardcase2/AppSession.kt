@@ -11,6 +11,7 @@ object AppSession {
     private const val KEY_USER_NAME = "userName"
     private const val KEY_USER_PHONE = "userPhone"
     private const val KEY_USER_BIO = "userBio"
+    private const val KEY_USER_GENDER = "userGender"
 
     fun saveLoginInfo(context: Context, userId: Int, token: String, email: String = "") {
         prefs(context).edit()
@@ -41,6 +42,11 @@ object AppSession {
     fun getUserBio(context: Context): String = prefs(context).getString(KEY_USER_BIO, "") ?: ""
     fun setUserBio(context: Context, bio: String) {
         prefs(context).edit().putString(KEY_USER_BIO, bio).apply()
+    }
+
+    fun getUserGender(context: Context): String = prefs(context).getString(KEY_USER_GENDER, "") ?: ""
+    fun setUserGender(context: Context, gender: String) {
+        prefs(context).edit().putString(KEY_USER_GENDER, gender).apply()
     }
 
     fun logout(context: Context) {

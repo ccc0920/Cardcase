@@ -2,35 +2,28 @@ package com.team4.cardcase2.foreground
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RadioButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.team4.cardcase2.AppSession
 import com.team4.cardcase2.R
+import com.team4.cardcase2.entity.Elements
+import com.team4.cardcase2.entity.ServerCard
 import com.team4.cardcase2.entity.UserCardsResponse
 import com.team4.cardcase2.interfaces.HttpRequest
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class Make1Fragment : Fragment() {
 
-    private var param1: String? = null
-    private var param2: String? = null
     private var selectedCardId: Int = -1
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var selectedCardName: String = ""
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -44,7 +37,14 @@ class Make1Fragment : Fragment() {
 
         val nextButton: Button = root.findViewById(R.id.gonext)
         nextButton.setOnClickListener {
-            val bundle = Bundle().apply { putInt("cardId", selectedCardId) }
+            if (selectedCardId <= 0) {
+                Toast.makeText(requireContext(), "Please select a card first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val bundle = Bundle().apply {
+                putInt("cardId", selectedCardId)
+                putString("cardName", selectedCardName)
+            }
             findNavController().navigate(R.id.make2Fragment, bundle)
         }
 
@@ -60,8 +60,9 @@ class Make1Fragment : Fragment() {
                         try {
                             val result = UserCardsResponse.fromJson(response)
                             if (result.success) {
-                                val adapter = CardAdapter(result.cards) { card ->
+                                val adapter = SelectableCardAdapter(result.cards) { card, name ->
                                     selectedCardId = card.cardId
+                                    selectedCardName = name
                                 }
                                 myCardView.adapter = adapter
                             }
@@ -76,14 +77,48 @@ class Make1Fragment : Fragment() {
         return root
     }
 
+    private inner class SelectableCardAdapter(
+        private val cards: List<ServerCard>,
+        private val onSelect: (ServerCard, String) -> Unit
+    ) : RecyclerView.Adapter<SelectableCardAdapter.VH>() {
+
+        var selectedPosition = -1
+
+        inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+            val name: TextView = view.findViewById(R.id.cardRowName)
+            val company: TextView = view.findViewById(R.id.cardRowCompany)
+            val radio: RadioButton = view.findViewById(R.id.cardRowRadio)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_order_card, parent, false)
+            return VH(view)
+        }
+
+        override fun onBindViewHolder(holder: VH, position: Int) {
+            val card = cards[position]
+            val name = card.elements.getByType("name").ifEmpty { "Unnamed Card" }
+            val company = card.elements.getByType("company")
+            holder.name.text = name
+            holder.company.text = company
+            holder.radio.isChecked = selectedPosition == position
+            holder.itemView.setOnClickListener {
+                val old = selectedPosition
+                selectedPosition = position
+                notifyItemChanged(old)
+                notifyItemChanged(position)
+                onSelect(card, name)
+            }
+        }
+
+        override fun getItemCount() = cards.size
+
+        private fun List<Elements>.getByType(type: String) =
+            firstOrNull { it.type == type }?.content ?: ""
+    }
+
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Make1Fragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance(param1: String, param2: String) = Make1Fragment()
     }
 }

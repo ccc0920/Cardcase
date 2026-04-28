@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_make3Fragment_to_payFragment"
             app:destination="@id/payFragment" />
+        <action
+            android:id="@+id/action_make3Fragment_to_make4Fragment"
+            app:destination="@id/make4Fragment" />
     </fragment>
     <fragment
         android:id="@+id/payFragment"
@@ -43,6 +46,11 @@
         <action
             android:id="@+id/action_make4Fragment_to_make2Fragment"
             app:destination="@id/make2Fragment" />
+        <action
+            android:id="@+id/action_make4Fragment_to_make1Fragment"
+            app:destination="@id/make1Fragment"
+            app:popUpTo="@id/make1Fragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/make1Fragment"

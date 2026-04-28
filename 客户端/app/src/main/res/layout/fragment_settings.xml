@@ -54,7 +54,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textView"
+                        android:id="@+id/settingsNameText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Your Name"
@@ -63,6 +63,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/settingsEmailText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"

@@ -1,137 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/make4Fragment"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F5F5F7"
     tools:context=".foreground.Make4Fragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:background="#F2F2F7"
-        android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/confirm_icon" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="351dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Order Placed!"
+        android:textColor="#1D1D1F"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center" />
 
-            <TextView
-                android:id="@+id/textView53"
-                android:layout_width="73dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="270dp"
-                android:layout_marginTop="36dp"
-                android:gravity="center"
-                android:textColor="#0162DD"
-                android:text="Payment"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Your business cards are being printed and will be delivered to the address you provided."
+        android:textColor="#86868B"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp" />
 
-            <TextView
-                android:id="@+id/textView52"
-                android:layout_width="73dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="139dp"
-                android:layout_marginTop="36dp"
-                android:textColor="#0162DD"
-                android:gravity="center"
-                android:text="Details"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/orderIdLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="#6366F1"
+        android:textSize="13sp"
+        android:gravity="center" />
 
-            <TextView
-                android:id="@+id/textView51"
-                android:layout_width="73dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="36dp"
-                android:textColor="#0162DD"
-                android:gravity="center"
-                android:text="Choose"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/continuemaking"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/btn_primary"
+        android:text="Order Another Card"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:stateListAnimator="@null" />
 
-            <ImageView
-                android:id="@+id/imageView31"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="289dp"
-                android:src="@drawable/confirm_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView30"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="158dp"
-                android:src="@drawable/confirm_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView29"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="27dp"
-                android:src="@drawable/confirm_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageView
-            android:id="@+id/imageView28"
-            android:layout_width="151dp"
-            android:layout_height="151dp"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="137dp"
-            android:src="@drawable/confirm_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView48"
-            android:layout_width="221dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="95dp"
-            android:layout_marginTop="324dp"
-            android:gravity="center"
-            android:text="Your Products Are On The Way"
-            android:textColor="#212529"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView49"
-            android:layout_width="281dp"
-            android:layout_height="66dp"
-            android:layout_marginStart="65dp"
-            android:layout_marginTop="402dp"
-            android:gravity="center"
-            android:text="Thank you for shopping. Your order has been successfully placed and has been processed for delivery"
-            android:textColor="#615D5D"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/continuemaking"
-            android:layout_width="121dp"
-            android:layout_height="18dp"
-            android:layout_marginStart="145dp"
-            android:layout_marginTop="557dp"
-            android:fontFamily="sans-serif-thin"
-            android:gravity="center"
-            android:text="Continue Making"
-            android:textColor="#0162DD"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+</LinearLayout>
