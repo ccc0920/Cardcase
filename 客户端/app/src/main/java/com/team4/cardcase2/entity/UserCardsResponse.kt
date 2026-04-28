@@ -14,3 +14,25 @@ data class UserCardsResponse(
         }
     }
 }
+
+data class OrderResponse(
+    val success: Boolean,
+    val orders: List<OrderItem>
+) {
+    data class OrderItem(
+        val orderId: Long,
+        val cardId: Long,
+        val materials: String,
+        val quantity: Int,
+        val contactInfo: String,
+        val paymentMethod: String,
+        val state: String
+    )
+
+    companion object {
+        fun fromJson(jsonString: String): OrderResponse {
+            val gson = Gson()
+            return gson.fromJson(jsonString, object : TypeToken<OrderResponse>() {}.type)
+        }
+    }
+}
