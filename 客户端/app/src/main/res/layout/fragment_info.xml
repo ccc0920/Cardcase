@@ -78,12 +78,22 @@
                     android:background="@drawable/avatar_bg"
                     android:src="@drawable/avatar_default"
                     android:scaleType="centerCrop"
-                    android:clipToOutline="true" />
+                    android:clipToOutline="true"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
+                    android:text="Tap to change"
+                    android:textColor="#6366F1"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="User ID"
                     android:textColor="#86868B"
                     android:textSize="13sp" />

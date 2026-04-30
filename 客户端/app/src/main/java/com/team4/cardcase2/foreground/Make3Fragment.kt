@@ -1,8 +1,10 @@
 package com.team4.cardcase2.foreground
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -55,7 +57,21 @@ class Make3Fragment : Fragment() {
 
         root.findViewById<Button>(R.id.placeOrderButton).setOnClickListener {
             val orderId = saveOrder(cardId, cardName, material, qty, unitPrice, total, recipName, recipPhone, recipAddress)
-            val bundle = Bundle().apply { putLong("orderId", orderId) }
+
+            // Open Taobao product page
+            val taobaoUrl = "https://buy.taobao.com/auction/buy_now.jhtml?x-itemid=624401065767&spm=pc_detail.30350276&mi_id=0000Ei8WCQVCb_4svgcByOAAcjD9BYCLmZYOsHx4ailcRQyusjNaaH3-D-LRe4PH0J4s"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(taobaoUrl)))
+
+            val bundle = Bundle().apply {
+                putLong("orderId", orderId)
+                putString("cardName", cardName)
+                putString("material", material)
+                putInt("qty", qty)
+                putDouble("total", total)
+                putString("recipName", recipName)
+                putString("recipPhone", recipPhone)
+                putString("recipAddress", recipAddress)
+            }
             findNavController().navigate(R.id.action_make3Fragment_to_make4Fragment, bundle)
         }
 

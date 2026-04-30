@@ -165,6 +165,50 @@
             android:textColorHint="#AEAEB2"
             android:textSize="16sp" />
 
+        <!-- Security Question -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="SECURITY QUESTION"
+            android:textColor="#1D1D1F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <Spinner
+            android:id="@+id/spinnerSecurityQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/field_bg"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="ANSWER"
+            android:textColor="#1D1D1F"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <EditText
+            android:id="@+id/securityAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/field_bg"
+            android:hint="Your answer"
+            android:inputType="text"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:textColor="#1D1D1F"
+            android:textColorHint="#AEAEB2"
+            android:textSize="16sp" />
+
         <!-- CTA -->
         <Button
             android:id="@+id/signUpButton"

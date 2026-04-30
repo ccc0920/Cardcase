@@ -2,6 +2,7 @@ package com.team4.cardcase2.foreground
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.CardLocalStore
 import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.*
 import com.team4.cardcase2.interfaces.HttpRequest
@@ -88,8 +90,22 @@ class CreateNewFragment : Fragment() {
         selectedColor = color
         selRings.values.forEach { it.visibility = View.INVISIBLE }
         selRings[color]?.visibility = View.VISIBLE
-        val gradientRes = colorToGradient(color)
-        previewCard.background = ContextCompat.getDrawable(requireContext(), gradientRes)
+        previewCard.background = ContextCompat.getDrawable(requireContext(), colorToGradient(color))
+
+        // White theme uses dark text; all others use white text
+        val isWhite = color == "white"
+        val nameColor   = if (isWhite) android.graphics.Color.parseColor("#1E293B") else android.graphics.Color.WHITE
+        val subColor    = if (isWhite) android.graphics.Color.parseColor("#64748B") else android.graphics.Color.parseColor("#C7D2FE")
+        val detailColor = if (isWhite) android.graphics.Color.parseColor("#334155") else android.graphics.Color.WHITE
+
+        previewCard.findViewById<android.widget.TextView>(R.id.showName)?.setTextColor(nameColor)
+        previewCard.findViewById<android.widget.TextView>(R.id.showTitle)?.setTextColor(subColor)
+        previewCard.findViewById<android.widget.TextView>(R.id.showCompany)?.setTextColor(subColor)
+        previewCard.findViewById<android.widget.TextView>(R.id.showPhone)?.setTextColor(detailColor)
+        previewCard.findViewById<android.widget.TextView>(R.id.showEmail)?.setTextColor(detailColor)
+        previewCard.findViewById<android.widget.ImageView>(R.id.iconCompany)?.setColorFilter(subColor)
+        previewCard.findViewById<android.widget.ImageView>(R.id.iconPhone)?.setColorFilter(detailColor)
+        previewCard.findViewById<android.widget.ImageView>(R.id.iconEmail)?.setColorFilter(detailColor)
     }
 
     private fun colorToGradient(color: String) = when (color) {
@@ -97,6 +113,7 @@ class CreateNewFragment : Fragment() {
         "teal"   -> R.drawable.card_gradient_teal
         "rose"   -> R.drawable.card_gradient_rose
         "slate"  -> R.drawable.card_gradient_slate
+        "white"  -> R.drawable.card_gradient_white
         else     -> R.drawable.card_gradient_blue
     }
 
@@ -133,14 +150,16 @@ class CreateNewFragment : Fragment() {
             "purple" to root.findViewById(R.id.swatchPurpleSel),
             "teal"   to root.findViewById(R.id.swatchTealSel),
             "rose"   to root.findViewById(R.id.swatchRoseSel),
-            "slate"  to root.findViewById(R.id.swatchSlateSel)
+            "slate"  to root.findViewById(R.id.swatchSlateSel),
+            "white"  to root.findViewById(R.id.swatchWhiteSel)
         )
         swatches = mapOf(
             "blue"   to root.findViewById(R.id.swatchBlue),
             "purple" to root.findViewById(R.id.swatchPurple),
             "teal"   to root.findViewById(R.id.swatchTeal),
             "rose"   to root.findViewById(R.id.swatchRose),
-            "slate"  to root.findViewById(R.id.swatchSlate)
+            "slate"  to root.findViewById(R.id.swatchSlate),
+            "white"  to root.findViewById(R.id.swatchWhite)
         )
         swatches.forEach { (color, view) ->
             view.setOnClickListener { selectColor(color) }
@@ -197,41 +216,55 @@ class CreateNewFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val name    = Elements("name",    showName.text.toString(),    Position(50, 10), Style("Arial", 20, "#FFFFFF", true,  false, false))
-            val title   = Elements("title",   inputTitle.text.toString(),  Position(50, 30), Style("Arial", 14, "#C7D2FE", false, false, false))
-            val company = Elements("company", inputCompany.text.toString(),Position(50, 50), Style("Arial", 14, "#C7D2FE", false, false, false))
-            val email   = Elements("email",   showEmail.text.toString(),   Position(50, 70), Style("Arial", 12, "#FFFFFF", false, false, false))
-            val phone   = Elements("phone",   showPhone.text.toString(),   Position(50, 90), Style("Arial", 12, "#FFFFFF", false, false, false))
+            val nameStr    = "${inputFirstName.text} ${inputSecondName.text}".trim()
+            val titleStr   = inputTitle.text.toString().trim()
+            val companyStr = inputCompany.text.toString().trim()
+            val phoneStr   = inputPhone.text.toString().trim()
+            val emailStr   = inputEmail.text.toString().trim()
 
-            val design = Design(selectedColor, selectedColor, "Arial", "default")
+            // --- Write to local SQLite immediately (card appears with no network needed) ---
+            val localId = if (isEditMode) {
+                CardLocalStore.updateByDisplayId(ctx, editCardId,
+                    nameStr, titleStr, companyStr, phoneStr, emailStr,
+                    selectedImageBase64, selectedColor)
+                editCardId
+            } else {
+                CardLocalStore.insert(ctx, userId,
+                    nameStr, titleStr, companyStr, phoneStr, emailStr,
+                    selectedImageBase64, selectedColor)
+            }
+
+            Toast.makeText(ctx, if (isEditMode) "Card updated!" else "Card saved!", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+
+            // --- Sync to server in background (non-blocking) ---
+            val name    = Elements("name",    nameStr,    Position(50, 10), Style("Arial", 20, "#FFFFFF", true,  false, false))
+            val title   = Elements("title",   titleStr,   Position(50, 30), Style("Arial", 14, "#C7D2FE", false, false, false))
+            val company = Elements("company", companyStr, Position(50, 50), Style("Arial", 14, "#C7D2FE", false, false, false))
+            val email   = Elements("email",   emailStr,   Position(50, 70), Style("Arial", 12, "#FFFFFF", false, false, false))
+            val phone   = Elements("phone",   phoneStr,   Position(50, 90), Style("Arial", 12, "#FFFFFF", false, false, false))
             val serverCard = ServerCard(
                 if (isEditMode) editCardId else 0, false, userId,
                 listOf(name, title, company, email, phone),
-                selectedImageBase64, "", design
+                selectedImageBase64, "", Design(selectedColor, selectedColor, "Arial", "default")
             )
-            val jsonBody = serverCard.toJson()
             val url = if (isEditMode) "http://10.0.2.2:8080/api/cards/$editCardId"
                       else "http://10.0.2.2:8080/api/create-card"
-
-            saveButton.isEnabled = false
             val http = HttpRequest()
             val doRequest: (String, String, String, (String?, Exception?) -> Unit) -> Unit =
                 if (isEditMode) http::sendPutRequest else http::sendPostRequest
-
-            doRequest(url, token, jsonBody) { response, exception ->
-                activity?.runOnUiThread {
-                    saveButton.isEnabled = true
-                    if (exception != null) {
-                        Toast.makeText(ctx, "Save failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(ctx, if (isEditMode) "Card updated!" else "Card saved!", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.blankFragment)
-                    }
+            doRequest(url, token, serverCard.toJson()) { response, _ ->
+                // Record server-assigned id on the local row so QR codes use it
+                if (!isEditMode && response != null) {
+                    try {
+                        val serverId = WholeServerCard.fromJson(response).card.cardId
+                        if (serverId > 0) CardLocalStore.setServerId(ctx, localId, serverId)
+                    } catch (_: Exception) {}
                 }
             }
         }
 
-        backButton.setOnClickListener { findNavController().navigate(R.id.blankFragment) }
+        backButton.setOnClickListener { findNavController().popBackStack() }
 
         // Live preview watchers
         fun updateName() {

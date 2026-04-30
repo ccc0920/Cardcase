@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.CardLocalStore
 import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.Elements
 import com.team4.cardcase2.entity.ServerCard
@@ -51,6 +52,17 @@ class Make1Fragment : Fragment() {
         val ctx = requireContext()
         val userId = AppSession.getUserId(ctx)
         val token = AppSession.getToken(ctx)
+
+        // Show own cards from SQLite immediately
+        fun showCards(cards: List<ServerCard>) {
+            myCardView.adapter = SelectableCardAdapter(cards) { card, name ->
+                selectedCardId = card.cardId
+                selectedCardName = name
+            }
+        }
+        showCards(CardLocalStore.loadAll(ctx, userId))
+
+        // Sync with server in background
         if (userId > 0 && token.isNotEmpty()) {
             HttpRequest().sendGetRequest(
                 "http://10.0.2.2:8080/api/cards/user/$userId", token
@@ -59,16 +71,11 @@ class Make1Fragment : Fragment() {
                     if (exception == null && response != null) {
                         try {
                             val result = UserCardsResponse.fromJson(response)
-                            if (result.success) {
-                                val adapter = SelectableCardAdapter(result.cards) { card, name ->
-                                    selectedCardId = card.cardId
-                                    selectedCardName = name
-                                }
-                                myCardView.adapter = adapter
+                            if (result.success && result.cards.isNotEmpty()) {
+                                CardLocalStore.syncFromServer(ctx, userId, result.cards)
+                                showCards(CardLocalStore.loadAll(ctx, userId))
                             }
-                        } catch (e: Exception) {
-                            // ignore
-                        }
+                        } catch (_: Exception) {}
                     }
                 }
             }

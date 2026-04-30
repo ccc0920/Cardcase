@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
@@ -52,11 +55,8 @@ class SettingsFragment : Fragment() {
         // Contact Us
         val contactRow: LinearLayout = root.findViewById(R.id.group2)
         contactRow.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:support@cardcase.app")
-                putExtra(Intent.EXTRA_SUBJECT, "CardCase Support")
-            }
-            startActivity(Intent.createChooser(intent, "Contact Us"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ccc0920/Cardcase"))
+            startActivity(intent)
         }
 
         // Privacy & Security
@@ -66,12 +66,12 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
         }
 
-        // About CardCase
+        // About CardShare
         val aboutRow: LinearLayout = root.findViewById(R.id.group4)
         aboutRow.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("About CardCase")
-                .setMessage("CardCase v1.0\n\nSmart business card sharing for the modern professional.\n\n© 2024 CardCase Team")
+                .setTitle("About CardShare")
+                .setMessage("CardShare v1.0\n\nSmart business card sharing for the modern professional.\n\n© 2024 CardShare Team")
                 .setPositiveButton("OK", null)
                 .show()
         }
@@ -107,6 +107,14 @@ class SettingsFragment : Fragment() {
         val email = AppSession.getEmail(ctx).ifEmpty { "Tap to edit profile" }
         root.findViewById<TextView>(R.id.settingsNameText).text = name
         root.findViewById<TextView>(R.id.settingsEmailText).text = email
+        val localAvatar = AppSession.getLocalAvatar(ctx)
+        if (localAvatar.isNotEmpty()) {
+            try {
+                val bytes = Base64.decode(localAvatar, Base64.DEFAULT)
+                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                if (bmp != null) root.findViewById<ImageView>(R.id.imageView8).setImageBitmap(bmp)
+            } catch (_: Exception) {}
+        }
     }
 
     private fun showOrderDialog(statusFilter: String?) {

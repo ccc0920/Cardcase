@@ -60,36 +60,38 @@ class HttpRequest {
     }
 
     fun sendGetRequest(url: String, authToken: String, callback: (String?, Exception?) -> Unit) {
-        // 创建URL
-        val fullUrl = url
-
-        // 创建Request
         val request = Request.Builder()
-            .url(fullUrl)
+            .url(url)
             .addHeader("Authorization", "Bearer $authToken")
             .get()
             .build()
 
-        // 发送请求
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // 处理失败
-                callback(null, e)
-            }
-
+            override fun onFailure(call: Call, e: IOException) { callback(null, e) }
             override fun onResponse(call: Call, response: Response) {
                 response.use {
-                    if (!it.isSuccessful) {
-                        callback(null, IOException("Unexpected code $it"))
-                        return
-                    }
-                    // 处理成功，获取返回值
-                    val responseBody = it.body?.string()
-                    callback(responseBody, null)
+                    if (!it.isSuccessful) { callback(null, IOException("Unexpected code $it")); return }
+                    callback(it.body?.string(), null)
                 }
             }
         })
     }
 
+    fun sendDeleteRequest(url: String, authToken: String, callback: (String?, Exception?) -> Unit) {
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $authToken")
+            .delete()
+            .build()
 
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { callback(null, e) }
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!it.isSuccessful) { callback(null, IOException("Unexpected code $it")); return }
+                    callback(it.body?.string(), null)
+                }
+            }
+        })
+    }
 }

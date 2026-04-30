@@ -19,11 +19,32 @@ class Make4Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_make4, container, false)
+        val args = arguments ?: Bundle()
 
-        val orderId = arguments?.getLong("orderId", -1L) ?: -1L
+        val orderId = args.getLong("orderId", -1L)
         if (orderId > 0) {
             root.findViewById<TextView>(R.id.orderIdLabel).text = "Order #$orderId"
         }
+
+        val cardName = args.getString("cardName", "")
+        val material = args.getString("material", "")
+        val qty = args.getInt("qty", 0)
+        val total = args.getDouble("total", 0.0)
+        val recipName = args.getString("recipName", "")
+        val recipPhone = args.getString("recipPhone", "")
+        val recipAddress = args.getString("recipAddress", "")
+
+        val summary = buildString {
+            appendLine("Card: $cardName")
+            appendLine("Material: $material")
+            appendLine("Quantity: $qty")
+            appendLine("Total: ¥%.2f".format(total))
+            appendLine("─────────────────")
+            appendLine("Recipient: $recipName")
+            appendLine("Phone: $recipPhone")
+            append("Address: $recipAddress")
+        }
+        root.findViewById<TextView>(R.id.orderSummaryText).text = summary
 
         root.findViewById<Button>(R.id.continuemaking).setOnClickListener {
             findNavController().navigate(R.id.action_make4Fragment_to_make1Fragment)

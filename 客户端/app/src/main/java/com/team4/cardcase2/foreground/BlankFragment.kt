@@ -1,18 +1,20 @@
 package com.team4.cardcase2.foreground
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.CardLocalStore
 import com.team4.cardcase2.R
+import com.team4.cardcase2.entity.ServerCard
 import com.team4.cardcase2.entity.UserCardsResponse
 import com.team4.cardcase2.interfaces.HttpRequest
 
@@ -31,13 +33,11 @@ class BlankFragment : Fragment(), ScanFragment.QRCodeScanResultListener {
         myCardView = root.findViewById(R.id.myCardView)
         myCardView.layoutManager = LinearLayoutManager(requireContext())
 
-        val addButton: Button = root.findViewById(R.id.addButton2)
-        addButton.setOnClickListener {
+        root.findViewById<android.widget.Button>(R.id.addButton2).setOnClickListener {
             findNavController().navigate(R.id.createNewFragment)
         }
 
-        val scanButton: Button = root.findViewById(R.id.scanButton2)
-        scanButton.setOnClickListener {
+        root.findViewById<ImageButton>(R.id.scanButton2).setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.blankFragment, ScanFragment())
                 .addToBackStack(null)
@@ -45,7 +45,6 @@ class BlankFragment : Fragment(), ScanFragment.QRCodeScanResultListener {
         }
 
         loadCards()
-
         return root
     }
 
@@ -56,31 +55,64 @@ class BlankFragment : Fragment(), ScanFragment.QRCodeScanResultListener {
 
     private fun loadCards() {
         val ctx = context ?: return
-        val userId = AppSession.getUserId(ctx)
-        val token = AppSession.getToken(ctx)
-        if (userId == 0 || token.isEmpty()) return
+        val uid = AppSession.getUserId(ctx)
 
-        val url = "http://10.0.2.2:8080/api/cards/user/$userId"
-        HttpRequest().sendGetRequest(url, token) { response, exception ->
+        // Always show from local SQLite immediately — no network needed
+        renderCards(CardLocalStore.loadAll(ctx, uid))
+
+        val token = AppSession.getToken(ctx)
+        if (uid == 0 || token.isEmpty()) return
+
+        // Sync with server in the background
+        HttpRequest().sendGetRequest("http://10.0.2.2:8080/api/cards/user/$uid", token) { response, exception ->
+            if (exception != null || response == null) return@sendGetRequest
             activity?.runOnUiThread {
-                if (exception != null) {
-                    Toast.makeText(ctx, "Failed to load cards", Toast.LENGTH_SHORT).show()
-                    return@runOnUiThread
-                }
                 try {
-                    val result = UserCardsResponse.fromJson(response!!)
-                    if (result.success) {
-                        cardAdapter = CardAdapter(result.cards) { card ->
-                            val bundle = Bundle().apply { putInt("cardId", card.cardId) }
-                            findNavController().navigate(R.id.cardDetailFragment, bundle)
-                        }
-                        myCardView.adapter = cardAdapter
+                    val result = UserCardsResponse.fromJson(response)
+                    if (result.success && result.cards.isNotEmpty()) {
+                        CardLocalStore.syncFromServer(ctx, uid, result.cards)
+                        renderCards(CardLocalStore.loadAll(ctx, uid))
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(ctx, "Error parsing cards", Toast.LENGTH_SHORT).show()
-                }
+                } catch (_: Exception) {}
             }
         }
+    }
+
+    private fun renderCards(cards: List<ServerCard>) {
+        cardAdapter = CardAdapter(cards) { card ->
+            val cardName = card.elements.firstOrNull { it.type == "name" }?.content ?: "Card"
+            AlertDialog.Builder(requireContext())
+                .setTitle(cardName)
+                .setItems(arrayOf("Edit", "Delete")) { _, which ->
+                    if (which == 0) {
+                        findNavController().navigate(R.id.createNewFragment,
+                            Bundle().apply { putInt("cardId", card.cardId) })
+                    } else {
+                        confirmDelete(card)
+                    }
+                }
+                .show()
+        }
+        myCardView.adapter = cardAdapter
+    }
+
+    private fun confirmDelete(card: ServerCard) {
+        val ctx = context ?: return
+        AlertDialog.Builder(ctx)
+            .setTitle("Delete Card")
+            .setMessage("Delete this card? This cannot be undone.")
+            .setPositiveButton("Delete") { _, _ ->
+                val uid = AppSession.getUserId(ctx)
+                CardLocalStore.delete(ctx, card.cardId)
+                renderCards(CardLocalStore.loadAll(ctx, uid))
+                val token = AppSession.getToken(ctx)
+                if (token.isNotEmpty()) {
+                    HttpRequest().sendDeleteRequest(
+                        "http://10.0.2.2:8080/api/cards/${card.cardId}", token) { _, _ -> }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun onQRCodeScanned(result: String) {

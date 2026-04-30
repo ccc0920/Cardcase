@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.CardLocalStore
 import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.*
 import com.team4.cardcase2.interfaces.HttpRequest
@@ -53,10 +54,19 @@ class PayFragment : Fragment() {
         val phoneInput: EditText = root.findViewById(R.id.editTextTextPersonName4)
         val addressInput: EditText = root.findViewById(R.id.editTextTextPersonName5)
 
-        // Load selected card info
+        // Load selected card info — own cards from SQLite immediately
         val ctx = requireContext()
         val userId = AppSession.getUserId(ctx)
         val token = AppSession.getToken(ctx)
+
+        val localCards = CardLocalStore.loadAll(ctx, userId)
+        if (localCards.isNotEmpty()) {
+            selectedCardId = localCards[0].cardId
+            val name = localCards[0].elements.firstOrNull { it.type == "name" }?.content ?: ""
+            nameInput.setText(name)
+        }
+
+        // Sync with server in background
         if (userId > 0 && token.isNotEmpty()) {
             HttpRequest().sendGetRequest(
                 "http://10.0.2.2:8080/api/cards/user/$userId", token
@@ -66,14 +76,18 @@ class PayFragment : Fragment() {
                         try {
                             val result = UserCardsResponse.fromJson(response)
                             if (result.success && result.cards.isNotEmpty()) {
-                                selectedCardId = result.cards[0].cardId.toInt()
-                                val card = result.cards[0]
-                                val name = card.elements.firstOrNull { it.type == "name" }?.content ?: ""
-                                nameInput.setText(name)
+                                CardLocalStore.syncFromServer(ctx, userId, result.cards)
+                                // Only update pre-fill if nothing was selected yet
+                                if (selectedCardId <= 0) {
+                                    val synced = CardLocalStore.loadAll(ctx, userId)
+                                    if (synced.isNotEmpty()) {
+                                        selectedCardId = synced[0].cardId
+                                        val name = synced[0].elements.firstOrNull { it.type == "name" }?.content ?: ""
+                                        nameInput.setText(name)
+                                    }
+                                }
                             }
-                        } catch (e: Exception) {
-                            // ignore
-                        }
+                        } catch (_: Exception) {}
                     }
                 }
             }

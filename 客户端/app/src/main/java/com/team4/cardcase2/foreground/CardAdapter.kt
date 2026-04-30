@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
@@ -41,15 +42,30 @@ class CardAdapter(
         holder.showPhone.text = card.elements.getByType("phone")
         holder.showEmail.text = card.elements.getByType("email")
 
-        // Apply color theme to card front
+        // Apply color gradient to card front background
         val gradientRes = when (card.design.color) {
             "purple" -> R.drawable.card_gradient_purple
             "teal"   -> R.drawable.card_gradient_teal
             "rose"   -> R.drawable.card_gradient_rose
             "slate"  -> R.drawable.card_gradient_slate
+            "white"  -> R.drawable.card_gradient_white
             else     -> R.drawable.card_gradient_blue
         }
         holder.cardFront.background = ContextCompat.getDrawable(holder.itemView.context, gradientRes)
+
+        // White theme uses dark text/icons; all others use white
+        val isWhite = card.design.color == "white"
+        val nameColor   = if (isWhite) Color.parseColor("#1E293B") else Color.WHITE
+        val subColor    = if (isWhite) Color.parseColor("#64748B") else Color.parseColor("#C7D2FE")
+        val detailColor = if (isWhite) Color.parseColor("#334155") else Color.WHITE
+        holder.showName.setTextColor(nameColor)
+        holder.showTitle.setTextColor(subColor)
+        holder.showCompany.setTextColor(subColor)
+        holder.showPhone.setTextColor(detailColor)
+        holder.showEmail.setTextColor(detailColor)
+        holder.iconCompany.setColorFilter(subColor)
+        holder.iconPhone.setColorFilter(detailColor)
+        holder.iconEmail.setColorFilter(detailColor)
 
         // Avatar: decode Base64 if present, else show default icon
         if (card.avatar.isNotEmpty()) {
@@ -149,6 +165,9 @@ class CardAdapter(
         val showEmail: TextView = itemView.findViewById(R.id.showEmail)
         val qrView: ImageView = itemView.findViewById(R.id.qrView)
         val cardAvatar: ImageView = itemView.findViewById(R.id.cardAvatar)
+        val iconCompany: ImageView = itemView.findViewById(R.id.iconCompany)
+        val iconPhone: ImageView = itemView.findViewById(R.id.iconPhone)
+        val iconEmail: ImageView = itemView.findViewById(R.id.iconEmail)
     }
 
     private fun List<Elements>.getByType(type: String): String =

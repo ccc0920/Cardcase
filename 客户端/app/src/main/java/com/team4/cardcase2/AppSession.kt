@@ -53,6 +53,47 @@ object AppSession {
         prefs(context).edit().clear().apply()
     }
 
+    fun saveLocalPassword(context: Context, email: String, password: String) {
+        context.getSharedPreferences("local_auth", Context.MODE_PRIVATE).edit()
+            .putString("pw_$email", password)
+            .apply()
+    }
+
+    fun checkLocalPassword(context: Context, email: String, password: String): Boolean {
+        val stored = context.getSharedPreferences("local_auth", Context.MODE_PRIVATE)
+            .getString("pw_$email", null) ?: return false
+        return stored == password
+    }
+
+    fun isEmailRegistered(context: Context, email: String): Boolean =
+        context.getSharedPreferences("local_auth", Context.MODE_PRIVATE).contains("pw_$email")
+
+    fun getStoredPassword(context: Context, email: String): String? =
+        context.getSharedPreferences("local_auth", Context.MODE_PRIVATE).getString("pw_$email", null)
+
+    fun saveLocalAvatar(context: Context, base64: String) {
+        prefs(context).edit().putString("localAvatar", base64).apply()
+    }
+
+    fun getLocalAvatar(context: Context): String = prefs(context).getString("localAvatar", "") ?: ""
+
+    fun saveSecurityQA(context: Context, email: String, question: String, answer: String) {
+        context.getSharedPreferences("security_qa", Context.MODE_PRIVATE).edit()
+            .putString("q_$email", question)
+            .putString("a_$email", answer.lowercase().trim())
+            .apply()
+    }
+
+    fun getSecurityQuestion(context: Context, email: String): String =
+        context.getSharedPreferences("security_qa", Context.MODE_PRIVATE)
+            .getString("q_$email", "") ?: ""
+
+    fun checkSecurityAnswer(context: Context, email: String, answer: String): Boolean {
+        val stored = context.getSharedPreferences("security_qa", Context.MODE_PRIVATE)
+            .getString("a_$email", null) ?: return false
+        return stored == answer.lowercase().trim()
+    }
+
     private fun prefs(context: Context): SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 }

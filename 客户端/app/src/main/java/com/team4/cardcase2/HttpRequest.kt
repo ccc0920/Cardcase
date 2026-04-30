@@ -70,35 +70,6 @@ class HttpRequest {
 
     }
 
-    fun sendVerifyRequest(url: String,jsonBody: String,callback: (String?, Exception?) -> Unit){
-        val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
-
-        // 创建Request
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callback(null, e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!it.isSuccessful) {
-                        callback(null, IOException("Unexpected code $it"))
-                        return
-                    }
-                    val responseBody = it.body?.string()
-                    callback(responseBody, null)
-                }
-            }
-        })
-
-
-    }
-
     fun sendLoginInfoRequest(url: String,jsonBody: String,callback: (String?, Exception?) -> Unit){
         val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
 

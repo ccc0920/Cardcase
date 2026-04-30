@@ -10,11 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.CardLocalStore
 import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.ServerCard
 import com.team4.cardcase2.entity.UserCardsResponse
@@ -64,7 +66,7 @@ class GroupFragment : Fragment(), ButtonClickListener {
         val addGroupButton: Button = root.findViewById(R.id.addGroupButton)
         addGroupButton.setOnClickListener { showInputDialog(userId) }
 
-        val scanButton: Button = root.findViewById(R.id.scanGroupButton)
+        val scanButton: ImageButton = root.findViewById(R.id.scanGroupButton)
         scanButton.setOnClickListener {
             childFragmentManager.beginTransaction()
                 .replace(R.id.cardFragment, ScanFragment())
@@ -82,26 +84,36 @@ class GroupFragment : Fragment(), ButtonClickListener {
         return root
     }
 
+    private fun mergeAllLocal(ctx: android.content.Context, userId: Int): List<ServerCard> {
+        val own = CardLocalStore.loadAll(ctx, userId)
+        val ownIds = own.map { it.cardId }.toSet()
+        val contacts = CardLocalStore.loadContacts(ctx, userId).filter { it.cardId !in ownIds }
+        return own + contacts
+    }
+
     private fun loadAllContacts(userId: Int) {
         val ctx = context ?: return
+
+        // Show own cards + scanned contacts from SQLite immediately
+        cardLists = mergeAllLocal(ctx, userId).toMutableList()
+        cardAdapter = CardAdapter(cardLists) { card -> showAddToGroupDialog(userId, card) }
+        cardView.adapter = cardAdapter
+
+        // Sync own cards with server in background
         val token = AppSession.getToken(ctx)
         if (token.isEmpty()) return
-
         HttpRequest().sendGetRequest("http://10.0.2.2:8080/api/cards/user/$userId", token) { response, exception ->
             activity?.runOnUiThread {
                 if (exception == null && response != null) {
                     try {
                         val result = UserCardsResponse.fromJson(response)
-                        if (result.success) {
-                            cardLists = result.cards.toMutableList()
-                            cardAdapter = CardAdapter(cardLists) { card ->
-                                showAddToGroupDialog(userId, card)
-                            }
+                        if (result.success && result.cards.isNotEmpty()) {
+                            CardLocalStore.syncFromServer(ctx, userId, result.cards)
+                            cardLists = mergeAllLocal(ctx, userId).toMutableList()
+                            cardAdapter = CardAdapter(cardLists) { card -> showAddToGroupDialog(userId, card) }
                             cardView.adapter = cardAdapter
                         }
-                    } catch (e: Exception) {
-                        // ignore parse errors
-                    }
+                    } catch (_: Exception) {}
                 }
             }
         }
@@ -224,17 +236,31 @@ class GroupFragment : Fragment(), ButtonClickListener {
         }
 
         val cidList = getCidList(userId, text)
-        val fetchedCards = mutableListOf<ServerCard>()
+        val allLocal = mergeAllLocal(ctx, userId).associateBy { it.cardId }
+        val localCards = mutableListOf<ServerCard>()
+        val missingCids = mutableListOf<Int>()
         for (cid in cidList) {
-            val card = fetchCard(cid, token)
-            if (card != null) fetchedCards.add(card)
+            val local = allLocal[cid]
+            if (local != null) localCards.add(local) else missingCids.add(cid)
         }
+
         activity?.runOnUiThread {
-            cardLists = fetchedCards
-            cardAdapter = CardAdapter(fetchedCards) { card ->
-                showCardOptionsDialog(userId, card)
-            }
+            cardLists = localCards
+            cardAdapter = CardAdapter(localCards) { card -> showCardOptionsDialog(userId, card) }
             cardView.adapter = cardAdapter
+        }
+
+        // Fetch any cards not found locally
+        for (cid in missingCids) {
+            val card = fetchCard(cid, token)
+            if (card != null) {
+                CardLocalStore.upsertContact(ctx, userId, card)
+                activity?.runOnUiThread {
+                    cardLists.add(card)
+                    cardAdapter = CardAdapter(cardLists) { c -> showCardOptionsDialog(userId, c) }
+                    cardView.adapter = cardAdapter
+                }
+            }
         }
     }
 

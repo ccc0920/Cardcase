@@ -20,10 +20,9 @@ import android.widget.Toast
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import com.team4.cardcase2.AppSession
+import com.team4.cardcase2.CardLocalStore
 import com.team4.cardcase2.R
 import com.team4.cardcase2.entity.Encoder
-import com.team4.cardcase2.entity.WholeServerCard
-import com.team4.cardcase2.interfaces.HttpRequest
 import java.io.InputStream
 
 private const val ARG_PARAM1 = "param1"
@@ -127,12 +126,7 @@ class ScanFragment : Fragment() {
 
     private fun processQRResult(encoded: String) {
         val ctx = context ?: return
-        val token = AppSession.getToken(ctx)
         val userId = AppSession.getUserId(ctx)
-        if (token.isEmpty()) {
-            parentFragmentManager.popBackStack()
-            return
-        }
 
         val cardId = try { Encoder().decode(encoded) } catch (e: Exception) { -1 }
         if (cardId <= 0) {
@@ -141,23 +135,16 @@ class ScanFragment : Fragment() {
             return
         }
 
-        val url = "http://10.0.2.2:8080/api/cards/$cardId"
-        HttpRequest().sendGetRequest(url, token) { response, exception ->
-            activity?.runOnUiThread {
-                if (exception != null || response == null) {
-                    Toast.makeText(ctx, "Failed to fetch card", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.popBackStack()
-                    return@runOnUiThread
-                }
-                try {
-                    val result = WholeServerCard.fromJson(response)
-                    showGroupDialog(userId, result.card.cardId)
-                } catch (e: Exception) {
-                    Toast.makeText(ctx, "Error reading card", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.popBackStack()
-                }
-            }
+        // Look up card in local DB (searches all users, both own cards and contacts)
+        val card = CardLocalStore.findByDisplayId(ctx, cardId)
+        if (card == null) {
+            Toast.makeText(ctx, "Card not found (ID: $cardId)", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+            return
         }
+
+        CardLocalStore.upsertContact(ctx, userId, card)
+        showGroupDialog(userId, cardId)
     }
 
     private fun showGroupDialog(userId: Int, cardId: Int) {

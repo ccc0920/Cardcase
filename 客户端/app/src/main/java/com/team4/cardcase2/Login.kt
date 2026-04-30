@@ -7,9 +7,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.team4.cardcase2.entity.LoginInfo
-import com.team4.cardcase2.entity.LoginInfo.Companion.toJson
-import com.team4.cardcase2.entity.Login_back
 import com.team4.cardcase2.foreground.MainActivity
 
 class Login : AppCompatActivity() {
@@ -30,46 +27,30 @@ class Login : AppCompatActivity() {
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show()
-            } else {
-                val info = LoginInfo(email, password)
-                val jsonInfo = info.toJson()
-                val url = "http://10.0.2.2:8080/api/login"
-                val httpRequest = HttpRequest()
-                httpRequest.sendInfoRequest(url, jsonInfo) { response, exception ->
-                    runOnUiThread {
-                        if (exception != null) {
-                            Toast.makeText(this, "Request failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-                        } else {
-                            val loginBack = Login_back.fromJson(response.toString())
-                            when {
-                                loginBack != null && !loginBack.success -> {
-                                    Toast.makeText(this, loginBack.message, Toast.LENGTH_SHORT).show()
-                                }
-                                loginBack != null && loginBack.success -> {
-                                    AppSession.saveLoginInfo(this, loginBack.userId, loginBack.token, email)
-                                    val intent = Intent(this, MainActivity::class.java)
-                                    startActivity(intent)
-                                }
-                                else -> {
-                                    Toast.makeText(this, "Unexpected response", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
+                return@setOnClickListener
+            }
+
+            if (AppSession.checkLocalPassword(this, email, password)) {
+                // Ensure userId and token are set (generate if missing)
+                var userId = AppSession.getUserId(this)
+                if (userId == 0) {
+                    userId = (email.hashCode() and 0x7FFFFFFF).coerceAtLeast(1)
                 }
+                val token = AppSession.getToken(this).ifEmpty { "local_$userId" }
+                AppSession.saveLoginInfo(this, userId, token, email)
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            } else {
+                Toast.makeText(this, "Incorrect email or password", Toast.LENGTH_SHORT).show()
             }
         }
 
         forgotButton.setOnClickListener {
             startActivity(Intent(this, forgot_password::class.java))
         }
-
         signupLinkButton.setOnClickListener {
             startActivity(Intent(this, Signup::class.java))
         }
-
-        backButton.setOnClickListener {
-            finish()
-        }
+        backButton.setOnClickListener { finish() }
     }
 }
